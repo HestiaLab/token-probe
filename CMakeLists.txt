@@ -60,6 +60,11 @@ add_library(tokenprobe_objects OBJECT ${TOKENPROBE_CORE_SOURCES})
 set_target_properties(tokenprobe_objects PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_compile_definitions(tokenprobe_objects PRIVATE TOKENPROBE_BUILDING_LIBRARY)
+if(BUILD_SHARED_LIBS)
+    # 对象库先于 tokenprobe_core 编译；shared 构建必须在这里定义
+    # TOKENPROBE_SHARED，否则 MSVC 不会生成 dllexport/导入库。
+    target_compile_definitions(tokenprobe_objects PRIVATE TOKENPROBE_SHARED)
+endif()
 target_include_directories(tokenprobe_objects
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -92,6 +97,9 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 set_target_properties(tokenprobe_core PROPERTIES
+    # MSVC 的导入库属于 ARCHIVE；不显式指定时链接行只写裸文件名，
+    # 在 shared 构建中会找不到 tokenprobe_core.lib。
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     VERSION ${PROJECT_VERSION}
     SOVERSION ${PROJECT_VERSION_MAJOR}

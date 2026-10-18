@@ -26,7 +26,8 @@ char *tp_arena_vprintf(tp_arena *a, const char *fmt, va_list ap);
 #if defined(__GNUC__) || defined(__clang__)
 __attribute__((format(printf, 2, 3)))
 #endif
-char *tp_arena_printf(tp_arena *a, const char *fmt, ...);
+char *
+tp_arena_printf(tp_arena *a, const char *fmt, ...);
 
 /* ------------------------------------------------------------- 字符串缓冲 */
 

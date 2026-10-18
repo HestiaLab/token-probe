@@ -13,7 +13,7 @@ include(CMakeFindDependencyMacro)
 
 find_dependency(Threads)
 
-if("@TOKENPROBE_HTTP_BACKEND@" STREQUAL "openssl" AND NOT @BUILD_SHARED_LIBS@)
+if("@TOKENPROBE_INSTALL_NEEDS_OPENSSL@" STREQUAL "ON")
     find_dependency(OpenSSL 1.1.1)
 endif()
 

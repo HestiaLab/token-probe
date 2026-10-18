@@ -192,13 +192,13 @@ typedef enum tokenprobe_metric_kind_t {
  */
 typedef struct tokenprobe_metric_t {
     tokenprobe_metric_kind_t kind; /**< 数据种类。 */
-    const char *id;                /**< 稳定键名，例如 `"total_balance"`。永不为 NULL。 */
-    const char *label;             /**< 显示文本，或 NULL。 */
-    const char *currency;          /**< ISO 代码，例如 `"CNY"`；token 类指标为 NULL。 */
-    const char *unit;              /**< `"currency"`、`"token"` 或 `"request"`。 */
-    tokenprobe_decimal_t amount;   /**< 数值。 */
-    const char *period_start;      /**< 统计时段的 ISO-8601 起点，或 NULL。 */
-    const char *period_end;        /**< 统计时段的 ISO-8601 终点，或 NULL。 */
+    const char *id;              /**< 稳定键名，例如 `"total_balance"`。永不为 NULL。 */
+    const char *label;           /**< 显示文本，或 NULL。 */
+    const char *currency;        /**< ISO 代码，例如 `"CNY"`；token 类指标为 NULL。 */
+    const char *unit;            /**< `"currency"`、`"token"` 或 `"request"`。 */
+    tokenprobe_decimal_t amount; /**< 数值。 */
+    const char *period_start;    /**< 统计时段的 ISO-8601 起点，或 NULL。 */
+    const char *period_end;      /**< 统计时段的 ISO-8601 终点，或 NULL。 */
 } tokenprobe_metric_t;
 
 /* ------------------------------------------------------------------ 结果 */
@@ -631,10 +631,10 @@ typedef struct tokenprobe_probe_options_t {
 
 /** 供应商探测的入参。 */
 typedef struct tokenprobe_provider_request_t {
-    const char *api_key;                     /**< 要出示的凭据。探测时永不为 NULL。 */
-    const char *base_url;                    /**< 覆盖 base URL；传 NULL 使用供应商默认值。 */
-    const char *period_start;                /**< 统计时段起点，或 NULL。 */
-    const char *period_end;                  /**< 统计时段终点，或 NULL。 */
+    const char *api_key;      /**< 要出示的凭据。探测时永不为 NULL。 */
+    const char *base_url;     /**< 覆盖 base URL；传 NULL 使用供应商默认值。 */
+    const char *period_start; /**< 统计时段起点，或 NULL。 */
+    const char *period_end;   /**< 统计时段终点，或 NULL。 */
     const tokenprobe_http_header_t *headers; /**< 附加请求头，或 NULL。 */
     size_t header_count;                     /**< @c headers 的元素个数。 */
     const char *method;                      /**< HTTP 方法，或 NULL。 */
