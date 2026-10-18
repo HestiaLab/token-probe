@@ -314,7 +314,7 @@ ctest --test-dir build/subproject-smoke -C Debug --output-on-failure
 项目版本只声明一次：
 
 ```cmake
-project(TokenProbe VERSION 0.2.0 LANGUAGES C)
+project(TokenProbe VERSION 0.0.1 LANGUAGES C)
 ```
 
 CMake 根据该值生成 `tokenprobe/version.h`。源文件应使用生成的宏，而不是重复字面版本号。

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21...3.31)
 
 project(TokenProbe
-    VERSION 0.2.0
+    VERSION 0.0.1
     DESCRIPTION "Probe AI provider API credit, spend and quota from C"
     LANGUAGES C
 )

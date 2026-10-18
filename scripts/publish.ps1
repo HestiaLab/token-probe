@@ -11,9 +11,9 @@
 
     用法：
       ./scripts/package.ps1
-      ./scripts/publish.ps1 -Tag v0.2.0            # 试运行
-      ./scripts/publish.ps1 -Tag v0.2.0 -Yes       # 发布
-      ./scripts/publish.ps1 -Tag v0.2.0 -Yes -Draft -Prerelease
+      ./scripts/publish.ps1 -Tag v0.0.1            # 试运行
+      ./scripts/publish.ps1 -Tag v0.0.1 -Yes       # 发布
+      ./scripts/publish.ps1 -Tag v0.0.1 -Yes -Draft -Prerelease
 #>
 
 [CmdletBinding()]

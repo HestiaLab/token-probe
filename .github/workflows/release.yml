@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to release (e.g. v0.2.0)'
+        description: 'Tag to release (e.g. v0.0.1)'
         required: false
         type: string
 

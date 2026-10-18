@@ -105,7 +105,7 @@ tokenprobe --provider deepseek --raw
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<tokenprobe schema="1" version="0.2.0">
+<tokenprobe schema="1" version="0.0.1">
   <result provider="deepseek" display-name="DeepSeek" ok="true" http-status="200" latency-ms="12" observed-at="1760790000000" available="true">
     <capabilities credit="true" spend="false" quota="false"/>
     <metrics>
@@ -119,7 +119,7 @@ tokenprobe --provider deepseek --raw
 ```
 
 ```json
-{"schema":1,"version":"0.2.0","result":{"provider":"deepseek","display_name":"DeepSeek","ok":true,"http_status":200,"latency_ms":12,"observed_at":1760790000000,"available":true,"capabilities":{"credit":true,"spend":false,"quota":false},"metrics":[{"kind":"credit","id":"total_balance","label":"Total balance","period_start":null,"period_end":null,"amount":"110.00","unit":"currency","currency":"CNY"}],"note":"…"}}
+{"schema":1,"version":"0.0.1","result":{"provider":"deepseek","display_name":"DeepSeek","ok":true,"http_status":200,"latency_ms":12,"observed_at":1760790000000,"available":true,"capabilities":{"credit":true,"spend":false,"quota":false},"metrics":[{"kind":"credit","id":"total_balance","label":"Total balance","period_start":null,"period_end":null,"amount":"110.00","unit":"currency","currency":"CNY"}],"note":"…"}}
 ```
 
 - **金额是字符串**，保留厂商返回的精确十进制，不经 `double`。
