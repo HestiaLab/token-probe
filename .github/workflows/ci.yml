@@ -1,0 +1,206 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, 'feature/**', 'fix/**', 'refactor/**', 'infra/**']
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        preset: [ninja-debug, ninja-release, ninja-shared]
+        include:
+          - os: ubuntu-latest
+            preset: ninja-debug
+            compiler: clang
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # 完整历史与 tag：文档门禁按 git 视图（已跟踪 ∪ 已忽略 ∪ 历史并集）
+          # 判定反引号路径，并用 tag 冻结已发布 CHANGELOG 段落。
+          # 浅克隆会使这两项判定都不可靠。
+          fetch-depth: 0
+
+      - name: Set up Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v6
+
+      - name: Set up MSVC
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Set up Clang
+        if: matrix.compiler == 'clang'
+        run: |
+          echo "CC=clang" >> "$GITHUB_ENV"
+          echo "CXX=clang++" >> "$GITHUB_ENV"
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Test
+        run: ctest --preset ${{ matrix.preset }} --output-on-failure
+
+  sanitize:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # 文档门禁按 git 历史判定反引号路径，并用 tag 冻结已发布
+          # CHANGELOG 段落；浅克隆会使这两项判定都不可靠。
+          fetch-depth: 0
+
+      - name: Set up Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v6
+
+      - name: Configure
+        run: cmake --preset ninja-asan
+
+      - name: Build
+        run: cmake --build --preset ninja-asan
+
+      - name: Test
+        run: ctest --preset ninja-asan --output-on-failure
+
+  coverage:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # 文档门禁按 git 历史判定反引号路径，并用 tag 冻结已发布
+          # CHANGELOG 段落；浅克隆会使这两项判定都不可靠。
+          fetch-depth: 0
+
+      - name: Set up Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v6
+
+      - name: Configure
+        run: cmake --preset ninja-coverage
+
+      - name: Build
+        run: cmake --build --preset ninja-coverage
+
+      - name: Test
+        run: ctest --preset ninja-coverage --output-on-failure
+
+  package-smoke:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            library: static
+            preset: ninja-release
+            config: Release
+          - os: ubuntu-latest
+            library: shared
+            preset: ninja-shared
+            config: Debug
+          - os: macos-latest
+            library: static
+            preset: ninja-release
+            config: Release
+          - os: macos-latest
+            library: shared
+            preset: ninja-shared
+            config: Debug
+          - os: windows-latest
+            library: static
+            preset: ninja-release
+            config: Release
+          - os: windows-latest
+            library: shared
+            preset: ninja-shared
+            config: Debug
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v6
+
+      - name: Set up MSVC
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure package build
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build package
+        run: cmake --build --preset ${{ matrix.preset }}
+
+      - name: Install package
+        run: cmake --install build/${{ matrix.preset }} --config ${{ matrix.config }} --prefix install
+
+      - name: Configure package smoke project
+        run: >
+          cmake
+          -G Ninja
+          -S tests/package_smoke
+          -B build/package-smoke-${{ matrix.library }}
+          -DCMAKE_BUILD_TYPE=${{ matrix.config }}
+          -DCMAKE_PREFIX_PATH=${{ github.workspace }}/install
+
+      - name: Build package smoke project
+        run: cmake --build build/package-smoke-${{ matrix.library }} --config ${{ matrix.config }}
+
+      - name: Test package smoke project
+        run: >
+          ctest
+          --test-dir build/package-smoke-${{ matrix.library }}
+          -C ${{ matrix.config }}
+          --output-on-failure
+
+  subproject-smoke:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v6
+
+      - name: Set up MSVC
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure subproject smoke
+        run: >
+          cmake
+          -G Ninja
+          -S tests/subproject_smoke
+          -B build/subproject-smoke
+          -DTOKENPROBE_SOURCE_DIR=${{ github.workspace }}
+
+      - name: Build subproject smoke
+        run: cmake --build build/subproject-smoke --config Debug
+
+      - name: Test subproject smoke
+        run: ctest --test-dir build/subproject-smoke -C Debug --output-on-failure

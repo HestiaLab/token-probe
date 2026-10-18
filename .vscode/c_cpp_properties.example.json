@@ -1,0 +1,22 @@
+{
+  "configurations": [
+    {
+      "name": "Fallback",
+      "includePath": [
+        "${workspaceFolder}/include",
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/build/ninja-debug/generated/include"
+      ],
+      "browse": {
+        "path": [
+          "${workspaceFolder}/include",
+          "${workspaceFolder}/src",
+          "${workspaceFolder}/build/ninja-debug/generated/include"
+        ],
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "cStandard": "c11"
+    }
+  ],
+  "version": 4
+}

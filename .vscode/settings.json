@@ -1,0 +1,9 @@
+{
+  "cmake.useCMakePresets": "always",
+  "cmake.configureOnOpen": true,
+  "cmake.configurePreset": "ninja-debug",
+  "cmake.buildPreset": "ninja-debug",
+  "cmake.testPreset": "ninja-debug",
+  "cmake.buildTarget": "all",
+  "C_Cpp.intelliSenseEngine": "disabled"
+}

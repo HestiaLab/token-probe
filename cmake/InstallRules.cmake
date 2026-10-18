@@ -1,0 +1,59 @@
+# 库 + CLI 项目的安装规则。
+#
+# 有意比模板的规则更窄：TokenProbe 只安装头文件、库、CLI 和 CMake 包配置，
+# 不安装源码树，因为它不是项目生成器。
+
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+set(TOKENPROBE_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/TokenProbe")
+
+install(TARGETS tokenprobe_core
+    EXPORT TokenProbeTargets
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+install(DIRECTORY ${TOKENPROBE_GENERATED_INCLUDE_DIR}/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/TokenProbeConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/TokenProbeConfig.cmake"
+    INSTALL_DESTINATION "${TOKENPROBE_INSTALL_CMAKEDIR}"
+)
+
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/TokenProbeConfigVersion.cmake"
+    VERSION "${PROJECT_VERSION}"
+    COMPATIBILITY SameMajorVersion
+)
+
+install(EXPORT TokenProbeTargets
+    NAMESPACE TokenProbe::
+    DESTINATION ${TOKENPROBE_INSTALL_CMAKEDIR}
+)
+
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/TokenProbeConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/TokenProbeConfigVersion.cmake"
+    DESTINATION ${TOKENPROBE_INSTALL_CMAKEDIR}
+)
+
+if(TOKENPROBE_BUILD_CLI AND TARGET tokenprobe)
+    install(TARGETS tokenprobe
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+endif()
+
+install(FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE"
+    "${CMAKE_CURRENT_SOURCE_DIR}/README.md"
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}
+)

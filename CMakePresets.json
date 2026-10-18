@@ -1,0 +1,232 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "ninja-base",
+      "hidden": true,
+      "inherits": "base",
+      "generator": "Ninja"
+    },
+    {
+      "name": "debug",
+      "displayName": "Debug",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "ninja-debug",
+      "displayName": "Ninja Debug",
+      "inherits": "ninja-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "ninja-release",
+      "displayName": "Ninja Release",
+      "inherits": "ninja-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "ninja-shared",
+      "displayName": "Ninja Shared Library",
+      "inherits": "ninja-debug",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": "ON"
+      }
+    },
+    {
+      "name": "ninja-asan",
+      "displayName": "Ninja AddressSanitizer",
+      "inherits": "ninja-debug",
+      "cacheVariables": {
+        "TOKENPROBE_ENABLE_ASAN": "ON",
+        "TOKENPROBE_ENABLE_UBSAN": "ON"
+      }
+    },
+    {
+      "name": "ninja-coverage",
+      "displayName": "Ninja Coverage",
+      "inherits": "ninja-debug",
+      "cacheVariables": {
+        "TOKENPROBE_ENABLE_COVERAGE": "ON"
+      }
+    },
+    {
+      "name": "shared",
+      "displayName": "Shared Library",
+      "inherits": "debug",
+      "binaryDir": "${sourceDir}/build/shared",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": "ON"
+      }
+    },
+    {
+      "name": "asan",
+      "displayName": "AddressSanitizer",
+      "inherits": "debug",
+      "binaryDir": "${sourceDir}/build/asan",
+      "cacheVariables": {
+        "TOKENPROBE_ENABLE_ASAN": "ON",
+        "TOKENPROBE_ENABLE_UBSAN": "ON"
+      }
+    },
+    {
+      "name": "coverage",
+      "displayName": "Coverage",
+      "inherits": "debug",
+      "binaryDir": "${sourceDir}/build/coverage",
+      "cacheVariables": {
+        "TOKENPROBE_ENABLE_COVERAGE": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "ninja-build-base",
+      "hidden": true,
+      "targets": [
+        "all"
+      ]
+    },
+    {
+      "name": "ninja-debug",
+      "inherits": "ninja-build-base",
+      "configurePreset": "ninja-debug"
+    },
+    {
+      "name": "ninja-release",
+      "inherits": "ninja-build-base",
+      "configurePreset": "ninja-release"
+    },
+    {
+      "name": "ninja-shared",
+      "inherits": "ninja-build-base",
+      "configurePreset": "ninja-shared"
+    },
+    {
+      "name": "ninja-asan",
+      "inherits": "ninja-build-base",
+      "configurePreset": "ninja-asan"
+    },
+    {
+      "name": "ninja-coverage",
+      "inherits": "ninja-build-base",
+      "configurePreset": "ninja-coverage"
+    },
+    {
+      "name": "debug",
+      "configurePreset": "debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release",
+      "configuration": "Release"
+    },
+    {
+      "name": "shared",
+      "configurePreset": "shared",
+      "configuration": "Debug"
+    },
+    {
+      "name": "asan",
+      "configurePreset": "asan",
+      "configuration": "Debug"
+    },
+    {
+      "name": "coverage",
+      "configurePreset": "coverage",
+      "configuration": "Debug"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "test-base",
+      "hidden": true,
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "ninja-debug",
+      "inherits": "test-base",
+      "configurePreset": "ninja-debug"
+    },
+    {
+      "name": "ninja-release",
+      "inherits": "test-base",
+      "configurePreset": "ninja-release"
+    },
+    {
+      "name": "ninja-shared",
+      "inherits": "test-base",
+      "configurePreset": "ninja-shared"
+    },
+    {
+      "name": "ninja-asan",
+      "inherits": "test-base",
+      "configurePreset": "ninja-asan"
+    },
+    {
+      "name": "ninja-coverage",
+      "inherits": "test-base",
+      "configurePreset": "ninja-coverage"
+    },
+    {
+      "name": "debug",
+      "inherits": "test-base",
+      "configurePreset": "debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "release",
+      "inherits": "test-base",
+      "configurePreset": "release",
+      "configuration": "Release"
+    },
+    {
+      "name": "shared",
+      "inherits": "test-base",
+      "configurePreset": "shared",
+      "configuration": "Debug"
+    },
+    {
+      "name": "asan",
+      "inherits": "test-base",
+      "configurePreset": "asan",
+      "configuration": "Debug"
+    },
+    {
+      "name": "coverage",
+      "inherits": "test-base",
+      "configurePreset": "coverage",
+      "configuration": "Debug"
+    }
+  ]
+}

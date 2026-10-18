@@ -1,0 +1,47 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "local-ninja-debug",
+      "displayName": "Local Ninja Debug",
+      "inherits": "ninja-debug",
+      "binaryDir": "${sourceDir}/build/local/ninja-debug"
+    },
+    {
+      "name": "local-make-debug",
+      "displayName": "Local Make Debug",
+      "inherits": "debug",
+      "generator": "Unix Makefiles",
+      "binaryDir": "${sourceDir}/build/local/make-debug"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "local-ninja-debug",
+      "configurePreset": "local-ninja-debug",
+      "targets": [
+        "all"
+      ]
+    },
+    {
+      "name": "local-make-debug",
+      "configurePreset": "local-make-debug"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "local-ninja-debug",
+      "configurePreset": "local-ninja-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "local-make-debug",
+      "configurePreset": "local-make-debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

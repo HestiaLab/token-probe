@@ -1,0 +1,22 @@
+@PACKAGE_INIT@
+
+# 已安装目标声明的依赖。
+#
+# tokenprobe_core 以 PRIVATE 方式链接传输层库，因此*共享库*的消费方不需要它们：
+# 共享对象已经记录了这些依赖。*静态库*不同——消费方的链接命令行必须解析它们，
+# CMake 会把它们以 $<LINK_ONLY:...> 的形式记录在 INTERFACE_LINK_LIBRARIES 中。
+# 因此这些导入目标必须在包含 TokenProbeTargets.cmake 之前存在，否则配置会以
+# 难以理解的 "set_target_properties called with incorrect number of arguments" 失败。
+#
+# Threads 始终必需：库用它作为时间源。
+include(CMakeFindDependencyMacro)
+
+find_dependency(Threads)
+
+if("@TOKENPROBE_HTTP_BACKEND@" STREQUAL "openssl" AND NOT @BUILD_SHARED_LIBS@)
+    find_dependency(OpenSSL 1.1.1)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/TokenProbeTargets.cmake")
+
+check_required_components(TokenProbe)

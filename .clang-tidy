@@ -1,0 +1,18 @@
+# C 的 malloc/realloc/free 会有意进行对象指针与 void * 之间的转换，
+# 因此关闭针对该模式的 C++ 检查。
+Checks: >
+  clang-diagnostic-*,
+  clang-analyzer-*,
+  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
+  bugprone-*,
+  performance-*,
+  portability-*,
+  misc-*,
+  -misc-include-cleaner,
+  -misc-no-recursion,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-multi-level-implicit-pointer-conversion,
+  -readability-*
+WarningsAsErrors: ''
+HeaderFilterRegex: '^(include|src|tests/(?!vendor)).*'
+FormatStyle: file

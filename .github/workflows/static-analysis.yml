@@ -1,0 +1,39 @@
+name: Static Analysis
+
+on:
+  push:
+    branches: [main, master, 'feature/**', 'fix/**', 'refactor/**', 'infra/**']
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cppcheck:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cppcheck clang-format clang-tidy ninja-build yamllint
+
+      - name: YAML lint
+        run: yamllint .github .yamllint.yml
+
+      - name: Format check
+        # 通过 bash 调用：本仓库中的 scripts/ 文件没有可执行位（模式 100644）。
+        run: bash scripts/static_analysis.sh format-check --require-tools
+
+      - name: Configure clang-tidy database
+        run: cmake --preset ninja-debug
+
+      - name: Clang-tidy
+        run: bash scripts/static_analysis.sh tidy --require-tools
+
+      - name: Cppcheck
+        run: bash scripts/static_analysis.sh cppcheck --require-tools
