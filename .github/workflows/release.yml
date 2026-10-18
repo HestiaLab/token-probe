@@ -70,8 +70,6 @@ jobs:
             ls -R build/ninja-release || true
             exit 1
           fi
-          # 生成 SHA256 校验和；此步骤失败必须让任务失败。
-          (cd dist && sha256sum -- * > SHA256SUMS)
           ls dist/
 
       - name: Upload package artifacts
@@ -127,6 +125,12 @@ jobs:
         with:
           path: dist
           merge-multiple: true
+
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum -- * > SHA256SUMS
+          ls -l
 
       - name: Generate release notes
         id: release_notes
