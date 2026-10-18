@@ -53,6 +53,12 @@ done
 
 if [ -z "$MODE" ]; then show_usage >&2; exit 2; fi
 
+# 只分析当前平台的传输后端：另一个文件在条件编译后是空翻译单元。
+case "$(uname -s)" in
+  MINGW*|MSYS*|CYGWIN*) PLATFORM_TRANSPORT="tp_http_openssl.c" ;;
+  *) PLATFORM_TRANSPORT="tp_http_winhttp.c" ;;
+esac
+
 tool_missing() {
   # $1 = 工具名称
   if [ "$REQUIRE_TOOLS" -ne 0 ]; then
@@ -86,7 +92,7 @@ case "$MODE" in
     command -v clang-tidy >/dev/null 2>&1 || tool_missing clang-tidy
     find src tests \
       \( -path tests/package_smoke -o -path tests/subproject_smoke -o -path tests/vendor \) \
-      -prune -o -type f -name '*.c' -print \
+      -prune -o -type f -name '*.c' ! -name "$PLATFORM_TRANSPORT" -print \
       | sort > .static-analysis-files.txt
     if [ ! -s .static-analysis-files.txt ]; then
       echo "ERROR: clang-tidy scan surface is empty (no .c found)" >&2
@@ -106,7 +112,8 @@ case "$MODE" in
     ;;
   cppcheck)
     command -v cppcheck >/dev/null 2>&1 || tool_missing cppcheck
-    find src tests \( -path tests/vendor \) -prune -o -type f -name '*.c' -print \
+    find src tests \( -path tests/vendor \) -prune -o \
+      -type f -name '*.c' ! -name "$PLATFORM_TRANSPORT" -print \
       | sort > .static-analysis-files.txt
     if [ ! -s .static-analysis-files.txt ]; then
       echo "ERROR: cppcheck scan surface is empty (no .c found)" >&2

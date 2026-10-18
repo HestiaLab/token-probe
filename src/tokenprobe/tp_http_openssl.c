@@ -112,7 +112,7 @@ static tokenprobe_status_t connect_tcp(const tp_url *url, int timeout_ms, int *o
     {
         struct timeval tv;
         tv.tv_sec = timeout_ms / 1000;
-        tv.tv_usec = (timeout_ms % 1000) * 1000;
+        tv.tv_usec = (long)((timeout_ms % 1000) * 1000L);
         (void)setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
         (void)setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
     }

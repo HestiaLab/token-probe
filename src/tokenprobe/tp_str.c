@@ -196,6 +196,7 @@ int tp_strbuf_printf(tp_strbuf *b, const char *fmt, ...) {
 
     va_start(ap, fmt);
     va_copy(probe, ap);
+    // NOLINTNEXTLINE(clang-analyzer-valist.Uninitialized): va_copy 已初始化 probe
     need = vsnprintf(NULL, 0, fmt, probe);
     va_end(probe);
     if (need < 0) {
@@ -222,6 +223,7 @@ void tp_error_set(tokenprobe_error_t *err, tokenprobe_status_t code, const char 
     err->code = code;
     err->http_status = 0;
     va_start(ap, fmt);
+    // NOLINTNEXTLINE(clang-analyzer-valist.Uninitialized): va_start 已初始化 ap
     vsnprintf(err->message, sizeof(err->message), fmt ? fmt : "", ap);
     va_end(ap);
     err->hint[0] = '\0';
@@ -233,6 +235,7 @@ void tp_error_set_hint(tokenprobe_error_t *err, const char *fmt, ...) {
         return;
     }
     va_start(ap, fmt);
+    // NOLINTNEXTLINE(clang-analyzer-valist.Uninitialized): va_start 已初始化 ap
     vsnprintf(err->hint, sizeof(err->hint), fmt ? fmt : "", ap);
     va_end(ap);
 }
@@ -246,6 +249,7 @@ void tp_error_set_http(tokenprobe_error_t *err, tokenprobe_status_t code, int ht
     err->code = code;
     err->http_status = http_status;
     va_start(ap, fmt);
+    // NOLINTNEXTLINE(clang-analyzer-valist.Uninitialized): va_start 已初始化 ap
     vsnprintf(err->message, sizeof(err->message), fmt ? fmt : "", ap);
     va_end(ap);
     err->hint[0] = '\0';

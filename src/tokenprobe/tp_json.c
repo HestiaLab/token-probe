@@ -272,13 +272,13 @@ static tp_json *parse_array(parser *p) {
         }
         if (count == cap) {
             size_t new_cap = cap ? cap * 2 : 8;
-            tp_json **grown = (tp_json **)tp_arena_alloc(p->arena, new_cap * sizeof(*grown));
+            tp_json **grown = (tp_json **)tp_arena_alloc(p->arena, new_cap * sizeof(tp_json *));
             if (!grown) {
                 fail(p, TOKENPROBE_ERR_OOM, line_at(p, p->pos), "out of memory");
                 return NULL;
             }
             if (items && count) {
-                memcpy(grown, items, count * sizeof(*grown));
+                memcpy(grown, items, count * sizeof(tp_json *));
             }
             items = grown;
             cap = new_cap;
@@ -375,7 +375,7 @@ static tp_json *parse_object(parser *p) {
             size_t new_cap = cap ? cap * 2 : 8;
             char **nk = (char **)tp_arena_alloc(p->arena, new_cap * sizeof(*nk));
             size_t *nl = (size_t *)tp_arena_alloc(p->arena, new_cap * sizeof(*nl));
-            tp_json **nv = (tp_json **)tp_arena_alloc(p->arena, new_cap * sizeof(*nv));
+            tp_json **nv = (tp_json **)tp_arena_alloc(p->arena, new_cap * sizeof(tp_json *));
             if (!nk || !nl || !nv) {
                 tp_strbuf_free(&key);
                 fail(p, TOKENPROBE_ERR_OOM, line_at(p, p->pos), "out of memory");
@@ -384,7 +384,7 @@ static tp_json *parse_object(parser *p) {
             if (keys && count) {
                 memcpy(nk, keys, count * sizeof(*nk));
                 memcpy(nl, key_lens, count * sizeof(*nl));
-                memcpy(nv, values, count * sizeof(*nv));
+                memcpy(nv, values, count * sizeof(tp_json *));
             }
             keys = nk;
             key_lens = nl;
