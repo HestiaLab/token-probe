@@ -115,6 +115,7 @@ char *tp_arena_vprintf(tp_arena *a, const char *fmt, va_list ap) {
     }
     va_list probe;
     va_copy(probe, ap);
+    // NOLINTNEXTLINE(clang-analyzer-valist.Uninitialized): va_copy 已初始化 probe
     int need = vsnprintf(NULL, 0, fmt, probe);
     va_end(probe);
     if (need < 0) {
@@ -124,6 +125,7 @@ char *tp_arena_vprintf(tp_arena *a, const char *fmt, va_list ap) {
     if (!p) {
         return NULL;
     }
+    // NOLINTNEXTLINE(clang-analyzer-valist.Uninitialized): 调用方已 va_start
     vsnprintf(p, (size_t)need + 1, fmt, ap);
     return p;
 }

@@ -276,6 +276,7 @@ void tokenprobe_context_log(tokenprobe_context_t *ctx, tokenprobe_log_level_t le
         return;
     }
     va_start(ap, fmt);
+    // NOLINTNEXTLINE(clang-analyzer-valist.Uninitialized): va_start 已初始化 ap
     vsnprintf(buf, sizeof(buf), fmt, ap);
     va_end(ap);
     ctx->log_fn(ctx->log_user, level, buf);
