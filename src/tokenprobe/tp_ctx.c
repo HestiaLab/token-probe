@@ -392,10 +392,13 @@ tokenprobe_status_t tokenprobe_probe_ex(const tokenprobe_provider_t *p, tokenpro
     char from_env_buf[512];
     tokenprobe_status_t st;
 
-    if (out) {
-        *out = NULL;
+    if (!out) {
+        tp_error_set(err, TOKENPROBE_ERR_INVALID_ARG,
+                     "tokenprobe_probe requires provider, context and out");
+        return TOKENPROBE_ERR_INVALID_ARG;
     }
-    if (!p || !ctx || !out) {
+    *out = NULL;
+    if (!p || !ctx) {
         tp_error_set(err, TOKENPROBE_ERR_INVALID_ARG,
                      "tokenprobe_probe requires provider, context and out");
         return TOKENPROBE_ERR_INVALID_ARG;
@@ -475,7 +478,7 @@ tokenprobe_status_t tokenprobe_probe_ex(const tokenprobe_provider_t *p, tokenpro
     st = p->probe(p, ctx, reqp, *out, err ? err : &scratch);
     if (st == TOKENPROBE_OK) {
         tp_result_set_observed_at(*out, tp_now_ms());
-    } else if (out && *out) {
+    } else if (*out) {
         tokenprobe_result_free(*out);
         *out = NULL;
     }
