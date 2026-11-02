@@ -1,7 +1,32 @@
 # TokenProbe
 
-用 C11 写的 AI 厂商 API 额度探测库与命令行工具。查询各厂商 AI API 的
-**剩余额度**、**周期花费**与**配额**，并可作为核心库被桌面、网页或服务端项目集成。
+Probe AI provider API credit, spend and quota from C — a C11 library and CLI.
+
+用 C11 写的 AI 厂商 API 额度探测库与命令行工具。查询各厂商 AI API 的 **剩余额度**、**周期花费**与**配额**，并可作为核心库被桌面、网页或服务端项目集成。
+
+> 状态：v0.0.1（2026-10-18 首个公开版本）· 目前仅 1 个厂商（DeepSeek 余额）· 早期项目，公共 API 仍可能变动
+
+[![CI](https://github.com/HestiaLab/token-probe/actions/workflows/ci.yml/badge.svg)](https://github.com/HestiaLab/token-probe/actions/workflows/ci.yml)
+[![Static Analysis](https://github.com/HestiaLab/token-probe/actions/workflows/static-analysis.yml/badge.svg)](https://github.com/HestiaLab/token-probe/actions/workflows/static-analysis.yml)
+[![Release](https://img.shields.io/github/v/release/HestiaLab/token-probe)](https://github.com/HestiaLab/token-probe/releases/tag/v0.0.1)
+[![License](https://img.shields.io/github/license/HestiaLab/token-probe)](LICENSE)
+
+[下载 v0.0.1](https://github.com/HestiaLab/token-probe/releases/tag/v0.0.1) · [文档索引](#文档) · [贡献指南](CONTRIBUTING.md) · [安全策略](SECURITY.md)
+
+```console
+$ ./build/ninja-debug/bin/tokenprobe.exe --version
+tokenprobe 0.0.1
+$ ./build/ninja-debug/bin/tokenprobe.exe --list
+ID           NAME                   KEY ENV VAR        CREDIT  SPEND   QUOTA   NOTES
+deepseek     DeepSeek               DEEPSEEK_API_KEY   yes     no      no      Balance only. DeepSeek exposes no usage/cost-report API, so period spend cannot be reported.
+$ DEEPSEEK_API_KEY= ./build/ninja-debug/bin/tokenprobe.exe --provider deepseek
+deepseek: INVALID_KEY: no API key for DeepSeek — set DEEPSEEK_API_KEY or pass --api-key
+  hint: set DEEPSEEK_API_KEY or pass --api-key
+```
+
+（最后一条命令在未设置 Key 时返回退出码 1，未发起请求；Windows PowerShell 可用 `$env:DEEPSEEK_API_KEY=''` 清空后再运行。）
+
+> 真实额度查询需要 `DEEPSEEK_API_KEY` 或 `--api-key`，会向厂商 API 发起真实请求；请自行确认计费与配额，不要在共享环境使用长期密钥。`--list`、`--version` 与全部测试无需 Key、无需联网。
 
 - **C11 + CMake**，Windows、Linux 与 macOS 跨平台。
 - **依赖尽可能少**：Windows 只用系统自带的 WinHTTP，无任何外部依赖；
@@ -40,8 +65,9 @@
 
 ## 快速开始
 
-**所需工具：** CMake 3.21+、C11 编译器（MSVC、GCC 或 Clang）、Ninja（默认预设）、
-Python 3（测试门禁脚本需要）。Linux 还需要 OpenSSL 开发包。
+**所需工具：** CMake 3.21+、C11 编译器（MSVC、GCC 或 Clang）、Ninja（默认预设）、Python 3（测试门禁脚本需要）、PowerShell 7（Windows 脚本）。Windows 使用 WinHTTP；Linux 还需要 OpenSSL 开发包；macOS 由 CI 验证，本机未验证。
+
+Windows 上 `bootstrap.ps1` / `check.ps1` 需要 PowerShell 7（`pwsh`）；Windows PowerShell 5.1 下实测解析失败。
 
 Windows PowerShell
 ```powershell
@@ -69,11 +95,13 @@ Linux/macOS
 
 ## 命令行用法
 
+以下 `--provider` / `--api-key` 示例需要真实 Key，会向厂商 API 发起请求；离线可先运行 `tokenprobe --list` 与 `tokenprobe --version`。
+
 ```sh
-# 列出支持的厂商及其能力
+# 列出支持的厂商及其能力（不需要 Key）
 tokenprobe --list
 
-# 查询余额（密钥从 DEEPSEEK_API_KEY 读取）
+# 查询余额（需要 Key；会发起真实请求）
 tokenprobe --provider deepseek
 
 # 显式传密钥，输出机器可读的 XML
@@ -85,6 +113,8 @@ tokenprobe --provider deepseek --api-key sk-... --json
 # 打印原始响应体以便排查字段变化
 tokenprobe --provider deepseek --raw
 ```
+
+示例中的 `sk-...` 是占位符，不会被执行；请替换为你自己的 Key，并注意厂商计费。
 
 周期花费、配额探测等需要额外参数的场景使用 `tokenprobe_probe_ex()`，
 可传 `tokenprobe_probe_options_t`（时间范围、附加请求头、方法与请求体）。
@@ -226,4 +256,4 @@ scripts/              引导、检查、格式化与发布脚本
 
 ## 许可证
 
-MIT
+本项目以 [MIT 许可证](LICENSE) 发布。
