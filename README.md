@@ -4,6 +4,8 @@ Probe AI provider API credit, spend and quota from C — a C11 library and CLI.
 
 用 C11 写的 AI 厂商 API 额度探测库与命令行工具。查询各厂商 AI API 的 **剩余额度**、**周期花费**与**配额**，并可作为核心库被桌面、网页或服务端项目集成。
 
+仓库还包含一个 Windows 桌面界面（WPF / .NET 10），它调用本项目的 CLI 读取余额，见 [gui/README.md](gui/README.md)。
+
 > 状态：v0.0.1（2026-10-18 首个公开版本）· 目前仅 1 个厂商（DeepSeek 余额）· 早期项目，公共 API 仍可能变动
 
 [![CI](https://github.com/HestiaLab/token-probe/actions/workflows/ci.yml/badge.svg)](https://github.com/HestiaLab/token-probe/actions/workflows/ci.yml)
@@ -92,6 +94,17 @@ Linux/macOS
 ```
 
 预设、生成器与常见错误见 [docs/guides/cmake.md](docs/guides/cmake.md)。
+
+## 桌面应用（Windows）
+
+`gui/` 下是一个 WPF 界面（.NET 10，框架依赖发布）：
+
+- **额度页**：选择厂商并查询，金额按币种原样显示，绝不跨币种求和。
+- **设置页**：输入 API Key 后必须点击"校验并保存"，只有真实探测成功才会用 DPAPI 加密写入本机；失败不会覆盖旧密钥。
+- **CLI 随应用分发**：固定从 `tools\tokenprobe.exe` 加载，界面不提供路径选择；Release 构建与发布要求先构建 release 版 CLI，否则直接失败。
+- 诊断日志按天滚动（最多 5 个文件、单个 512 KB），写入前对 `sk-` 前缀脱敏；设置页可直接打开日志目录或在 GitHub 上提交带环境信息的 issue。
+
+构建、运行、测试与安全模型见 [gui/README.md](gui/README.md)。
 
 ## 命令行用法
 
@@ -213,6 +226,7 @@ tests/                CTest 测试（vendored Unity）
 docs/guides/          主题指南
 docs/adr/             架构决策记录
 scripts/              引导、检查、格式化与发布脚本
+gui/                  WPF 桌面应用（.NET 10）及其测试
 ```
 
 ## 文档
@@ -253,6 +267,7 @@ scripts/              引导、检查、格式化与发布脚本
 | [SECURITY.md](SECURITY.md) | 漏洞报告与依赖处理 |
 | [C_PROJECT_STANDARD.md](C_PROJECT_STANDARD.md) | 本仓库遵循的 C 工程标准 |
 | [CHANGELOG.md](CHANGELOG.md) | 版本变更记录 |
+| [gui/README.md](gui/README.md) | WPF 桌面应用的构建、运行、测试与安全模型 |
 
 ## 许可证
 

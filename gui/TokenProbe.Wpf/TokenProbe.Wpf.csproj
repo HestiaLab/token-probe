@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RootNamespace>TokenProbe.Wpf</RootNamespace>
+    <AssemblyName>TokenProbe.Wpf</AssemblyName>
+    <ApplicationIcon>Assets\TokenProbe.ico</ApplicationIcon>
+    <Version>0.0.1</Version>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TokenProbeReleaseExe>$(MSBuildThisFileDirectory)..\..\build\ninja-release\bin\tokenprobe.exe</TokenProbeReleaseExe>
+    <TokenProbeDebugExe>$(MSBuildThisFileDirectory)..\..\build\ninja-debug\bin\tokenprobe.exe</TokenProbeDebugExe>
+  </PropertyGroup>
+
+  <!-- Release always bundles the release CLI. Debug may fall back to the debug build
+       so the UI can be worked on without rebuilding the C side every time. -->
+  <PropertyGroup Condition="'$(TokenProbeExePath)' == '' AND Exists('$(TokenProbeReleaseExe)')">
+    <TokenProbeExePath>$(TokenProbeReleaseExe)</TokenProbeExePath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TokenProbeExePath)' == '' AND '$(Configuration)' != 'Release' AND Exists('$(TokenProbeDebugExe)')">
+    <TokenProbeExePath>$(TokenProbeDebugExe)</TokenProbeExePath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TokenProbe.Core\TokenProbe.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TokenProbeExePath)' != ''">
+    <None Include="$(TokenProbeExePath)" Link="tools\tokenprobe.exe" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" Visible="false" />
+  </ItemGroup>
+
+  <Target Name="ValidateTokenProbeBundling" BeforeTargets="Build">
+    <Error Condition="'$(Configuration)' == 'Release' AND '$(TokenProbeExePath)' == ''"
+           Text="Release 构建与发布必须携带 tools\tokenprobe.exe。请先构建 C CLI：cmake --preset ninja-release &amp;&amp; cmake --build --preset ninja-release" />
+    <Warning Condition="'$(Configuration)' != 'Release' AND '$(TokenProbeExePath)' == ''"
+             Text="未找到 build\ninja-release\bin\tokenprobe.exe 或 build\ninja-debug\bin\tokenprobe.exe；应用可构建但无法查询，Release 构建会直接失败。" />
+  </Target>
+
+</Project>
