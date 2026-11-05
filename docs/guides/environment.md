@@ -15,7 +15,7 @@
 | Ninja | 是（默认预设） | `ninja-*` 预设的构建生成器 |
 | GDB | 是（调试） | 断点、单步、查看变量 |
 | clangd | 否 | 编辑器代码导航与诊断 |
-| clang-format | 否 | 本地格式化检查 |
+| clang-format | 否 | 本地格式化检查（CI 使用 22.1.8） |
 | clang-tidy | 否 | 可选的本地静态分析 |
 
 ## 安装步骤
@@ -61,6 +61,8 @@ pacman -S --needed \
 ```
 
 `clang-tools-extra` 提供 `clangd`、`clang-format`、`clang-tidy`（`/ucrt64/bin/clangd.exe`），无需单独下载 LLVM。
+
+格式门禁以 CI 使用的 **clang-format 22.1.8** 为准。不同大版本的换行与对齐决策可能相反（例如 18 与 22 对同一结构体的对齐结论不同），本地版本不一致时 `./scripts/check.ps1` 会给出与 CI 相反的结论；先运行 `clang-format --version` 对齐版本，再判断是否为真实违规。
 
 ### 5. CMake（原生 Windows）
 
