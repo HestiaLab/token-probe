@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="TokenProbe.Core.Tests/TokenProbe.Core.Tests.csproj" />
+  <Project Path="TokenProbe.Core/TokenProbe.Core.csproj" />
+  <Project Path="TokenProbe.FakeProbe/TokenProbe.FakeProbe.csproj" />
+  <Project Path="TokenProbe.Wpf/TokenProbe.Wpf.csproj" />
+</Solution>
