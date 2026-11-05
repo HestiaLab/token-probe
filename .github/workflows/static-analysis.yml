@@ -20,7 +20,15 @@ jobs:
       - name: Install tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y cppcheck clang-format clang-tidy ninja-build yamllint
+          sudo apt-get install -y cppcheck clang-tidy ninja-build yamllint
+          # 格式门禁以 clang-format 22.1.8 为准；Ubuntu 自带的 18 与 22 的
+          # 换行/对齐决策不同，会让同一份代码得到相反结论。
+          python3 -m venv "$RUNNER_TEMP/clang-format"
+          "$RUNNER_TEMP/clang-format/bin/pip" install --quiet clang-format==22.1.8
+          echo "$RUNNER_TEMP/clang-format/bin" >> "$GITHUB_PATH"
+
+      - name: Verify clang-format version
+        run: clang-format --version | grep -q "version 22.1.8"
 
       - name: YAML lint
         run: yamllint .github .yamllint.yml
